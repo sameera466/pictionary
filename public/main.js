@@ -80,7 +80,7 @@ var userlist = function(names) {
     users = names;
     var html = '<p class="chatbox-header">' + 'Players' + '</p>';
     for (var i = 0; i < names.length; i++) {
-        html += '<li>' + names[i] + '</li>';
+        html += '<li>' + names[i].username + ' ' + names[i].points + '</li>';
     };
     $('ul').html(html);
 };
@@ -135,12 +135,12 @@ var pictionary = function() {
 
     console.log('You are the drawer');
 
-    $('.users').on('dblclick', 'li', function() {
-        if (click == true) {
-            var target = $(this).text();
-            socket.emit('swap rooms', {from: user, to: target});
-        };
-    });
+    // $('.users').on('dblclick', 'li', function() {
+    //     if (click == true) {
+    //         var target = $(this).text();
+    //         socket.emit('swap rooms', {from: user, to: target});
+    //     };
+    // });
 
     canvas.on('mousedown', function(event) { 
         drawing = true;   

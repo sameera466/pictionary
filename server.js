@@ -44,7 +44,7 @@ io.on('connection', function (socket) {
 		console.log(socket.username + ' has joined. ID: ' + socket.id);
 
 		// save the name of the user to an array called users
-		users.push(socket.username);
+		users.push({username: socket.username, points: 0});
 
 		// if the user is first to join OR 'drawer' room has no connections
 		if (users.length == 1 || typeof io.sockets.adapter.rooms['drawer'] === 'undefined') {
@@ -93,7 +93,7 @@ io.on('connection', function (socket) {
 		for (var i = 0; i < users.length; i++) {
 
 			// remove user from users list
-			if (users[i] == socket.username) {
+			if (users[i].username == socket.username) {
 				users.splice(i, 1);
 			};
 		};
@@ -103,14 +103,14 @@ io.on('connection', function (socket) {
 		io.emit('userlist', users);
 
 		// if 'drawer' room has no connections..
-		if ( typeof io.sockets.adapter.rooms['drawer'] === "undefined") {
+		if ( typeof io.sockets.adapter.rooms['drawer'] === "undefined" && users.length) {
 			
 			// generate random number based on length of users list
 			var x = Math.floor(Math.random() * (users.length));
-			console.log(users[x]);
+			console.log(users[x].username);
 
 			// submit new drawer event to the random user in userslist
-			io.in(users[x]).emit('new drawer', users[x]);
+			io.in(users[x].username).emit('new drawer', users[x].username);
 		};
 	});
 
@@ -140,6 +140,14 @@ io.on('connection', function (socket) {
 
 		// submit 'guesser' event to this user
 		socket.emit('guesser', socket.username);
+		for(var i = 0; i < users.length; i++) {
+			if(users[i].username == socket.username) {
+				users[i].points += 1;
+				break;
+			}
+		}
+
+		io.emit('userlist', users);
 
 		// submit 'drawer' event to the name of user that was doubleclicked
 		io.in(data.to).emit('drawer', data.to);
