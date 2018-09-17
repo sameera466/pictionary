@@ -23,7 +23,7 @@
 <div id="main">
     <h1>Pictionary</h1>
         <div class="row">
-            <canvas id="canvas"></canvas><div class="users"><ul></ul>
+            <canvas id="canvas"></canvas><div class="users"><div className='timer'>Time left: <span className='time'></span></div><ul></ul>
             <div id="guesses"></div>
             <div class="draw-buttons">
                 <button value="0" class="clear" type="button">X</button>
@@ -44,6 +44,6 @@
         </div>
         <form id="guess" class="hidden" >
             Guess the word! <input name="guess" class="guess-input" type="text">
-        </form> 
+        </form>
     </div>
 </div>

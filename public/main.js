@@ -18,7 +18,7 @@ function usernameAsk() {
             alert(user + ' already exists');
             return false
         };
-        
+
         socket.emit('join', user);
         $('.grey-out').fadeOut(300);
         $('.user').fadeOut(300);
@@ -142,8 +142,8 @@ var pictionary = function() {
     //     };
     // });
 
-    canvas.on('mousedown', function(event) { 
-        drawing = true;   
+    canvas.on('mousedown', function(event) {
+        drawing = true;
     });
     canvas.on('mouseup', function(event) {
         drawing = false;
@@ -153,7 +153,7 @@ var pictionary = function() {
         var offset = canvas.offset();
         obj.position = {x: event.pageX - offset.left,
                         y: event.pageY - offset.top};
-        
+
         if (drawing == true && click == true) {
             draw(obj);
             socket.emit('draw', obj);
@@ -161,6 +161,13 @@ var pictionary = function() {
     });
 
 };
+
+var timer = (time) => {
+    console.log('received ', time);
+    let html = time;
+    $('.timer').html(html);
+
+}
 
 $(document).ready(function() {
 
@@ -181,5 +188,6 @@ $(document).ready(function() {
     socket.on('correct answer', correctAnswer);
     socket.on('reset', reset);
     socket.on('clear screen', clearScreen);
+    socket.on('timer', timer);
 
 });

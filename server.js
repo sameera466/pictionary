@@ -8,6 +8,9 @@ app.use(express.static('public'));
 var server = http.Server(app);
 var io = socket_io(server);
 
+let interval = null
+let timer = null;
+
 var users = [];
 
 var words = [
@@ -59,11 +62,19 @@ io.on('connection', function (socket) {
 			// send the random word to the user inside the 'drawer' room
 			io.in(socket.username).emit('draw word', newWord());
 		//	console.log(socket.username + "'s draw word (join event): " + newWord());
-		} 
+		}
 
-		// if there are more than one names in users 
+		// if there are more than one names in users
 		// or there is a person in drawer room..
 		else {
+
+			isPlaying = true;
+			timer = 1000;
+			interval = setInterval(() => {
+				timer -= 1;
+				console.log('submitting timer event, timers at: ', timer)
+				io.emit('timer', timer);
+			}, 1000);
 
 			// additional users will join the 'guesser' room
 			socket.join('guesser');
@@ -72,10 +83,10 @@ io.on('connection', function (socket) {
 			io.in(socket.username).emit('guesser', socket.username);
 			console.log(socket.username + ' is a guesser');
 		}
-	
+
 		// update all clients with the list of users
 		io.emit('userlist', users);
-		
+
 	});
 
 	// submit drawing on canvas to other clients
@@ -104,7 +115,7 @@ io.on('connection', function (socket) {
 
 		// if 'drawer' room has no connections..
 		if ( typeof io.sockets.adapter.rooms['drawer'] === "undefined" && users.length) {
-			
+
 			// generate random number based on length of users list
 			var x = Math.floor(Math.random() * (users.length));
 			console.log(users[x].username);
@@ -112,6 +123,10 @@ io.on('connection', function (socket) {
 			// submit new drawer event to the random user in userslist
 			io.in(users[x].username).emit('new drawer', users[x].username);
 		};
+
+		if(!users.length) {
+			clearInterval(interval);
+		}
 	});
 
 	socket.on('new drawer', function(name) {
@@ -125,15 +140,17 @@ io.on('connection', function (socket) {
 
 		// submit 'drawer' event to the same user
 		socket.emit('drawer', name);
-		
+
 		// send a random word to the user connected to 'drawer' room
 		io.in('drawer').emit('draw word', newWord());
-	
+
 	});
 
 	// initiated from drawer's 'dblclick' event in Player list
 	socket.on('swap rooms', function(data) {
 
+		timer = null;
+		clearInterval(interval);
 		// drawer leaves 'drawer' room and joins 'guesser' room
 		socket.leave('drawer');
 		socket.join('guesser');
@@ -154,7 +171,16 @@ io.on('connection', function (socket) {
 
 		// submit random word to new user drawer
 		io.in(data.to).emit('draw word', newWord());
-	
+
+		timer = 1000;
+
+		interval = setInterval(() => {
+			timer -= 1;
+			console.log('submitting timer event, timers at: ', timer)
+			io.emit('timer', timer);
+		}, 1000);
+
+
 		io.emit('reset', data.to);
 
 	});
