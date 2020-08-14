@@ -144,6 +144,8 @@ io.on('connection', function (socket) {
 		// send a random word to the user connected to 'drawer' room
 		io.in('drawer').emit('draw word', newWord());
 
+		timer = 100;
+
 	});
 
 	// initiated from drawer's 'dblclick' event in Player list
