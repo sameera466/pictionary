@@ -69,7 +69,7 @@ io.on('connection', function (socket) {
 		else {
 
 			isPlaying = true;
-			timer = 1000;
+			timer = 100;
 			interval = setInterval(() => {
 				timer -= 1;
 				console.log('submitting timer event, timers at: ', timer)
@@ -172,7 +172,7 @@ io.on('connection', function (socket) {
 		// submit random word to new user drawer
 		io.in(data.to).emit('draw word', newWord());
 
-		timer = 1000;
+		timer = 100;
 
 		interval = setInterval(() => {
 			timer -= 1;
