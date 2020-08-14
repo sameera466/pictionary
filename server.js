@@ -198,6 +198,6 @@ io.on('connection', function (socket) {
 
 })
 
-server.listen(process.env.PORT || 8080, function() {
-	console.log('Server started at http://localhost:8080');
+server.listen(process.env.PORT || 11922, function() {
+	console.log('Server started at http://localhost:11922');
 });
